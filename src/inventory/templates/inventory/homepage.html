@@ -1,0 +1,28 @@
+
+
+{%extends 'home/base.html'%}
+{%block content%}
+
+<h1>Order</h1>	
+<div id=app>
+  [[title]]
+
+  <li v-for= "day in days">[[day]]</li>
+ </div>
+
+
+{%endblock%}
+
+{%block script%}
+  <script >
+
+new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#app',
+  data: {
+    title: 'Welcome to My Journal',
+    days:[1,2,3]
+  }
+})
+  </script>
+{%endblock%}
