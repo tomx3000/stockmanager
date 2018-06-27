@@ -1,18 +1,148 @@
 
 
 {%extends 'home/base.html'%}
+
+{%block style%}
+{% load static %}
+<link rel="stylesheet" href="{% static "css/floating-labels.css" %}" />
+
+{%endblock%}
+
 {%block content%}
 
-<h1>Order</h1>	
-<div id=app>
-  [[title]]
+<div id=app class="container">
+<div class='row '>
+	<div class='col-md-8'>
+	<div class="row">
+		   <form class="form-signin" v-on:submit="checkform">
+    {% csrf_token %}
+<!--       <div class="form-label-group">
+        <input type="text" id="inpuitemname" class="form-control" placeholder="Product name" v-model='selected' required autofocus>
+        <label for="inpuitemname">Item</label>
+      </div> -->
 
-  <input type="text" v-model="title">
+      <div class="input-group mb-3">
+	  <div class="input-group-prepend">
+	    <label class="input-group-text" for="inputGroupSelect01">Product</label>
+	  </div>
+	  <select  v-model="selected" class="custom-select" id="inputGroupSelect01">
+	    <option disabled value="" >Choose</option>
+	    <option v-bind:value="item.id" v-for="item in items" v-cloak>[[item.item_name]]</option>
+	  </select>
+	</div>
 
-  <li v-for= "item in items">[[item.item_name]]</li>
+
+      <div class="form-label-group">
+        <input type="text" id="inputitemquantity" class="form-control" placeholder=" Quantity" v-model='salesquantity' required autofocus>
+        <label for="inputitemquantity">Quantity </label>
+      </div>
+      <div class="form-label-group">
+        <input type="text" id="inputitemamount" class="form-control" placeholder="Amount" v-model='salesamount' required autofocus>
+        <label for="inputitemamount">Amount</label>
+      </div>
+
+      <button class="btn btn-lg btn-dark btn-block" type="submit">Take Order</button>
+      <!-- <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p> -->
+    </form>
+		
+	</div>
+
+	<div class="row"  style="max-height: 250px;
+	overflow-y: auto;
+	overflow-x: auto;">
+
+	<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Date</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Cost</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="sale in sales" v-if="sale.sales_received" v-cloak>
+      <th scope="row">[[sale.id]]</th>
+      <td> [[sale.created_at]] </td>
+      <td v-if="item.id == sale.item" v-for ="item in items">[[item.item_name]]</td>
+      <td>[[sale.sales_quantity]]</td>
+      <td>[[sale.sales_amount]]</td>
+    </tr>
+    
+  </tbody>
+</table>
+
+
+
+		
+</div>
+<ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+        <h6  class="my-0" > Total </h6>
+       
+      <div>
+       
+      </div>
+      	<h2 class="text-muted"> Tsh [[totalsale]] </h2>
+      </div>
+  </li>
+
+</ul>
+
+</div>
+<div class='col-md-4'>
+	<ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+        <h6  class="my-0" > Total </h6>
+        
+      </div>
+      <div>
+      <h4 class="text-muted align-right" v-cloak> Tsh [[totalacceptsale]] </h4>
+      	
+      </div>
+  </li>
+
+</ul> 
+<div style="max-height: 500px;
+	overflow-y: auto;
+	overflow-x: auto;">
+
+	 <ul class="list-group">
+
+			<li class="list-group-item d-flex justify-content-between lh-condensed" v-for= "sale in sales"  v-if="!sale.sales_received" v-on:dblclick="acceptSales(sale.id)" v-cloak>
+	              <div>
+	                <h6 v-if="item.id == sale.item" class="my-0" v-for="item in items">[[item.item_name]] </h6>
+	                <small class="text-muted"> [[sale.sales_quantity]] </small>
+	              </div>
+	              <div>
+	              <span class="text-muted">Tsh [[sale.sales_amount]] </span>
+	              <br>
+	              <button type="button" class="close" aria-label="Close" v-on:click="deleteSale(sale.id)">
+	              <span aria-hidden="true">&times;</span>
+				  </button>
+	              	
+	              </div>
+	              
+	            </li>
+
+	 </ul>
+
+</div>
+		
   
- <button v-on:click="getitem" class='btn btn-primarry btn-small'>get</button>
+ <button style="margin-top: 10px;" v-on:click="acceptAllSales" class='btn btn-light btn-small'>Yes All</button>
+  <button v-on:click="declineAllSales" style="margin-top: 10px;" class='btn btn-dark btn-small'>No All</button>
+
+
  </div>
+
+</div>
+
+</div>
+
 
 
 {%endblock%}
@@ -20,28 +150,162 @@
 {%block script%}
   <script >
 
+// Vue.http.interceptors.push(function (request, next) {
+//     request.headers['X-CSRF-TOKEN'] = Laravel.csrfToken;
+//     next();
+// });
+   		// alert(csrftoken)
 new Vue({
   delimiters: ['[[', ']]'],
   el: '#app',
   data: {
     title: 'Take order',
     days:[1,2,3],
-    items:''
+    sales:'',
+    items:'',
+    itemname:'',
+    salesamount:0,
+    salesquantity:0,
+    selected:'',
+    itemuser:1,
+    salecustomer:1,
+    totalacceptsale:0,
+    totalsale:0
   },
+
   methods:{
-  	getitem:function(){
+  	getSales:function(){
   		this.title='fetching data'
-  		 this.$http.get('/api/item')
+  		 this.$http.get('/api/sale')
   		 .then(function(response){
-  		 	this.items=response.data
+  		 	this.sales=response.data.serial
   		 	this.title='data fetched'
+  		 	this.itemuser= 1
+  		 	// alert("welcome")
+  		 	this.totalacceptsale=this.getTotalAcceptSales(this.sales)
+  		 	this.totalsale=this.getToatalSales(this.sales)
+  		 })
+  		 .catch(function(error){
+  		 	this.title='error getting salse'
+  		 })
+  	},
+  	getItems:function(){
+		 this.$http.get('/api/item')
+		 .then(function(response){
+		 	this.items=response.data
+		 })
+		 .catch(function(error){
+		 	this.title='error getting items'
+		 })
+  	},
+  	checkform:function(e){
+ //  		csrftoken = Cookies.get('csrftoken');
+	// headers = {HTTP_X_CSRFTOKEN: csrftoken};
+  		 this.$http.post('/api/sale/',{'item':this.selected,'sales_amount':this.salesamount,'sales_quantity':this.salesquantity,'user':this.itemuser,'customer':this.salecustomer})
+  		 .then(function(response){
+  		 	// this.items=response.data
+  		 	this.title=response.data
+  		 	 this.getSales()
+  		 	 this.salesamount=0,
+   			 this.salesquantity=0,
+   			 this.selected=''
+
+  		 	// alert('response')
   		 })
   		 .catch(function(error){
   		 	this.title='error getting items'
   		 })
-  	}
+
+
+  		e.preventDefault();
+  	},
+  	deleteSale:function(id){
+  		 this.$http.delete('/api/sale/'+id+'/')
+  		 .then(function(response){
+  		 	// this.items=response.data
+  		 	this.title=response.data
+  		 	this.getSales()
+  		 	// alert('response')
+  		 })
+  		 .catch(function(error){
+  		 	this.title='error getting items'
+  		 })
 
   	},
+  	acceptSales:function(id){
+  		this.$http.post('/sale/'+id+'/',{'id':id})
+  		 .then(function(response){
+  		 	// this.items=response.data
+  		 	this.title=response.data
+  		 	this.getSales()
+  		 	// alert('response')
+  		 })
+  		 .catch(function(error){
+  		 	this.title='error getting items'
+  		 })
+
+
+  	},
+  	declineAllSales:function(){
+  		this.$http.post('/saledecline/')
+  		 .then(function(response){
+  		 	// this.items=response.data
+  		 	this.title=response.data
+  		 	this.getSales()
+  		 	// alert('response')
+  		 })
+  		 .catch(function(error){
+  		 	this.title='error getting items'
+  		 })
+
+  	}
+  	,acceptAllSales:function(){
+  		this.$http.post('/saleaccept/')
+  		 .then(function(response){
+  		 	// this.items=response.data
+  		 	this.title=response.data
+  		 	this.getSales()
+  		 	// alert('response')
+  		 })
+  		 .catch(function(error){
+  		 	this.title='error getting items'
+  		 })
+
+
+  	},
+  	getTotalAcceptSales:function(sales){
+  	var amount=0;  	
+		$.each(sales, function(key, value) {
+			     if(!value.sales_received){
+			     	amount+=value.sales_amount
+				     }
+				 });
+		
+		return amount;
+
+
+  	}
+  	,getToatalSales:function(sales){
+
+  		var amount=0;  	
+		$.each(sales,function(key, value) {
+			     if(value.sales_received){
+			     	amount+=value.sales_amount
+				     }
+				 });
+		
+		return amount;
+  	}
+
+
+  	},
+  	computed:{
+
+  	},
+  	beforeMount(){
+  		this.getItems()
+  		this.getSales()
+  	}
   }
 )
   </script>

@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from .utility import generate_manufucture
 # Create your models here.
-
+from django.contrib.auth.models import User
 SOMEFIXED = getattr(settings,'FIXE_VALUE',3)
 
 class ItemManager(models.Manager):
@@ -113,6 +113,7 @@ class Item(models.Model):
 class Inventory(models.Model):
 	# userid
 	item=models.ForeignKey(Item,on_delete=models.CASCADE)
+	user=models.ForeignKey(User,on_delete=models.CASCADE)
 	quantity=models.FloatField()
 	created_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
 	updated_at=models.DateTimeField(auto_now=True,null=True,blank=True)
@@ -125,9 +126,11 @@ class Inventory(models.Model):
 
 class Sales(models.Model):
 	item=models.ForeignKey(Item,on_delete=models.CASCADE)
-	# userid
+	user=models.ForeignKey(User,on_delete=models.CASCADE)
 	customer=models.ForeignKey(Customer,on_delete=models.CASCADE)
+	sales_quantity=models.FloatField()
 	sales_amount=models.FloatField()
+	sales_received=models.BooleanField(default=False)
 	created_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
 	updated_at=models.DateTimeField(auto_now=True,null=True,blank=True)
 
