@@ -1,6 +1,7 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
 from django.views import View
+from django.contrib import messages
 
 
 from .models import Sales,Store,Employee,Company,Customer,Inventory,Item
@@ -10,14 +11,42 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 # Create your views here.
 
+pathselector={1:'base',2:'base',3:'order',4:'expense',5:'counter'}
+
+privillage={'sales':3,'admin':1,'assistantadmin':2,'bursar':4,'godown':5}
+
 @csrf_exempt
 def AcceptSale(request,*args,**kargs):
 	
 	sale=Sales.objects.filter(id=kargs['id'])
 	updatesale=sale.update(sales_received=True)
+	# updating the quantity of item sold 
+
 	item=Item.objects.filter(id=sale.first().item.id)
 	item.update(item_size=item.first().item_size-sale.first().sales_quantity)
 
+	print(kargs['id'])
+	# print(request.POST)
+	return HttpResponse('ok')
+
+@csrf_exempt
+def AuthorizeSale(request,*args,**kargs):
+	
+	sale=Sales.objects.filter(id=kargs['id'])
+	updatesale=sale.update(sales_authorized=True,adminuser=request.user.id)
+
+	# updating the quantity of item sold 
+	print(kargs['id'])
+	# print(request.POST)
+	return HttpResponse('ok')
+
+@csrf_exempt
+def IssueSale(request,*args,**kargs):
+	
+	sale=Sales.objects.filter(id=kargs['id'])
+	updatesale=sale.update(sales_issue_item=True,issueuser=request.user.id)
+
+	# updating the quantity of item sold 
 	print(kargs['id'])
 	# print(request.POST)
 	return HttpResponse('ok')
@@ -29,6 +58,7 @@ def AcceptSaleAll(request,*args,**kargs):
 		for sale in sales:
 			sale.sales_received=True
 			sale.save()
+			# updating the quantity of item sold 
 			item=Item.objects.filter(id=sale.item.id)
 			item.update(item_size=item.first().item_size-sale.sales_quantity)
 
@@ -55,34 +85,82 @@ class MyView(View):
 		return HttpResponse('ok')
 class HomePage(View):
 	def get(self,request,*args,**kagrs):
-
-		return render(request,'home/base.html',{})
-
-class Inventory(View):
-	def get(self,request,*args,**kargs):
 		form=ItemForm()
 
-		return render(request,'inventory/homepage.html',{'form':form})
+		user = request.user
+		# home page limited to only admin 1 and 2
+		if request.user.employee.employee_privillage <= privillage['assistantadmin']:
+			return render(request,'home/base.html',{'form':form,'user':user})
+		else:
+			return redirect(pathselector[request.user.employee.employee_privillage])
 
 
-def Product(request,*args,**kargs):
-	form=ItemForm()
+def ViewOrder(request,*args,**kargs):
 
-	return render(request,'inventory/product.html',{'form':form})
+	user = request.user
+	# access to the order/sales page limited to admin 1 and 2 and sales person 3
+	if request.user.employee.employee_privillage <= privillage['assistantadmin'] or request.user.employee.employee_privillage == privillage['sales']:
+		return render(request,'inventory/homepage.html',{'user':user})
+	else:
+		return redirect(pathselector[request.user.employee.employee_privillage])
+
+		
 
 
-def Counter(request,*args,**kargs):
-	form=ItemForm()
+def ViewProduct(request,*args,**kargs):
+	user = request.user
+	
+	# access to item creation page limited to admin 1 and 2
+	if request.user.employee.employee_privillage <= privillage['assistantadmin']:
+		return render(request,'inventory/product.html',{'user':user})
+	else:
+		return redirect(pathselector[request.user.employee.employee_privillage])
 
-	return render(request,'inventory/inventory.html',{'form':form})
+def ViewCustomer(request,*args,**kargs):
+	user = request.user
+	# access to the order/sales page limited to admin 1 and 2 and sales person 3
+	if request.user.employee.employee_privillage <= privillage['assistantadmin'] or request.user.employee.employee_privillage == privillage['sales']:
+		return render(request,'inventory/customer.html',{'user':user})
+	else:
+		return redirect(pathselector[request.user.employee.employee_privillage])
 
-def Settings(request,*args,**kargs):
+def ViewCounter(request,*args,**kargs):
 
-	form=ItemForm()
+	user = request.user
+	
+	# access to item inventory/godown page limited to admin 1 and 2
+	if request.user.employee.employee_privillage <= privillage['assistantadmin'] or request.user.employee.employee_privillage == privillage['godown']:
+		return render(request,'inventory/inventory.html',{'user':user})
+	else:
+		return redirect(pathselector[request.user.employee.employee_privillage])
 
-	return render(request,'inventory/settings.html',{'form':form})
 
-def Login(request,*args,**kargs):
+def ViewSettings(request,*args,**kargs):
+
+	# less than 2 is admin
+# just testing 
+#  real <=2 i.e <= ssistantadmin
+	if request.user.employee.employee_privillage >=1:
+		return render(request,'inventory/settings.html',{})
+	else:
+		return redirect(pathselector[request.user.employee.employee_privillage])
+
+
+
+def ViewExpense(request,*args,**kargs):
+
+	user = request.user
+	
+	# access to item inventory/godown page limited to admin 1 and 2
+	if request.user.employee.employee_privillage <= privillage['assistantadmin'] or request.user.employee.employee_privillage == privillage['bursar']:
+		return render(request,'inventory/bursar.html',{'user':user})
+	else:
+		return redirect(pathselector[request.user.employee.employee_privillage])
+
+
+
+	
+def ViewLogin(request,*args,**kargs):
 	form=ItemForm()
 	if(request.method=='POST'):
 
@@ -92,7 +170,7 @@ def Login(request,*args,**kargs):
 
 		if user is not None:
 
-		    # login(request, user)
+		    login(request, user)
 
 		    # logout(request)
 		    return redirect('base')
@@ -104,6 +182,15 @@ def Login(request,*args,**kargs):
 		return render(request,'inventory/login.html',{'form':form})		
 
 	
+def ViewAuthorize(request,*args,**kargs):
+
+	# less than 2 is admin
+
+	if request.user.employee.employee_privillage <=privillage['assistantadmin']:
+		return render(request,'inventory/authorize.html',{})
+	else:
+		return redirect(pathselector[request.user.employee.employee_privillage])
+
 
 # print(args)
 	# print(kagrs)

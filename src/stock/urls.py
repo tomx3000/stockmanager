@@ -19,25 +19,31 @@ from django.urls import  path,include
 from .routers import router
 from django.views.generic import TemplateView
 
-from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,Product,Counter,Settings,Login
+from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale
 
 urlpatterns = [
 path('admin/', admin.site.urls),
 # sales
 path('sale/<slug:id>/', AcceptSale),
+# path('getallsales/', GetAllSale),
 path('saledecline/', DeclineSaleAll),
 path('saleaccept/', AcceptSaleAll),
+path('authorizesale/<slug:id>/', AuthorizeSale),
+path('issuesale/<slug:id>/', IssueSale),
 
 # path('/sale/', MyView.as_view()),
 
 # path('home/', HomePage.as_view(),name='base'),
-path('order/', Inventory.as_view(),name='order'),
+path('order/', ViewOrder,name='order'),
 
-path('product/', Product,name='product'),
-path('counter/', Counter,name='counter'),
-path('settings/', Settings,name='settings'),
+path('product/', ViewProduct,name='product'),
+path('counter/', ViewCounter,name='counter'),
+path('expense/', ViewExpense,name='expense'),
+path('customer/', ViewCustomer,name='customer'),
+path('settings/', ViewSettings,name='settings'),
+path('authorize/', ViewAuthorize,name='authorize'),
 
-path('login/', Login,name='login'),
+path('login/', ViewLogin,name='login'),
 
 
 
@@ -45,6 +51,8 @@ path('login/', Login,name='login'),
 path('inventory/', include('inventory.urls')),
 path('api/',include(router.urls)),
 
-path('home/',TemplateView.as_view(template_name='home/base.html'),name='base'),
+# path('home/',TemplateView.as_view(template_name='home/base.html'),name='base'),
+path('home/',HomePage.as_view(),name='base'),
+
 
 ]

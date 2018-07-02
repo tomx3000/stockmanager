@@ -19,14 +19,8 @@
 
     <!-- Custom styles for this template -->
 
-    {% load static %}
+ {% load static %}
 <link rel="stylesheet" href="{% static "css/dashboard.css" %}" />
-
-{%block style%}
-
-{%endblock%}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
 <style type="text/css">
 	
 	[v-cloak]{
@@ -34,16 +28,27 @@
 	}
 </style>
 
+{%block style%}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+{%endblock%}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+
   </head>
 
   <body>
   <div >
   	
   	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Oceanic </a>
-      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" >
-      <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
+      <a class="navbar-brand col-2 mr-0" href="#">Oceanic : {{user.username}}
+      </a>
+      <input class="form-control form-control-dark col-8 w-100" type="text" placeholder="Search" aria-label="Search" >
+      <ul class="navbar-nav px-3 col-2">
+      
+        <li class="nav-item text-nowrap ">
           <a class="nav-link" href="/login/">Sign out</a>
         </li>
       </ul>
@@ -57,30 +62,53 @@
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
-              <li class="nav-item">
+            {%if user.employee.employee_privillage <= 2 %}              <li class="nav-item">
                 <a class="nav-link " href="{%url 'base'%}">
                   <span data-feather="home"></span>
                   Dashboard <span class="sr-only">(current)</span>
                 </a>
               </li>
+              {%endif%}
+              {%if user.employee.employee_privillage <= 2 or user.employee.employee_privillage == 3%}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'order' %}">
                   <span data-feather="file"></span>
                   Orders
                 </a>
               </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="{%url 'customer' %}">
+                  <span data-feather="file"></span>
+                  Customers
+                </a>
+              </li>
+              {%endif%}
+              {%if user.employee.employee_privillage <= 2 %}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'product' %}">
                   <span data-feather="shopping-cart"></span>
                   Products
                 </a>
               </li>
+              {%endif%}
+              {%if user.employee.employee_privillage <= 2 or user.employee.employee_privillage == 4 %}
+              <li class="nav-item">
+                <a class="nav-link" href="{%url 'expense' %}">
+                  <span data-feather="users"></span>
+                  Expenses
+                </a>
+              </li>
+              {%endif%}
+              {%if user.employee.employee_privillage <= 2 or user.employee.employee_privillage == 5 %}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'counter' %}">
                   <span data-feather="users"></span>
                   Stock
                 </a>
               </li>
+              {%endif%}
+
 
             </ul>
 
@@ -91,12 +119,37 @@
               </a>
             </h6>
             <ul class="nav flex-column mb-2">
+            {%if user.employee.employee_privillage <= 2 %}
+              <li class="nav-item">
+                <a class="nav-link" href="{%url 'authorize' %}">
+                  <span data-feather="file-text"></span>
+                  Authorize
+                </a>
+              </li>
+              {%endif%}
+              <li class="nav-item">
+                <a class="nav-link" href="{%url 'counter' %}">
+                  <span data-feather="file-text"></span>
+                  Profile
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{%url 'counter' %}">
+                  <span data-feather="file-text"></span>
+                  Alerts
+                </a>
+              </li>
+              {%if user.employee.employee_privillage <= 2 %}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'settings' %}">
                   <span data-feather="file-text"></span>
-                  settings
+                  Settings
                 </a>
               </li>
+
+              {%endif%}
+              
+              
             </ul>
           </div>
         </nav>
@@ -121,37 +174,61 @@
 
           <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
 
-          <h2>SAlES </h2>
+          <div id="salestable">
+
+          <h2 v-cloak>[[tablename]] </h2>
           <div class="table-responsive">
             <table class="table table-striped table-sm">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
-                  <td>ipsum</td>
-                  <td>dolor</td>
-                  <td>sit</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                  <td>consectetur</td>
-                  <td>adipiscing</td>
-                  <td>elit</td>
-                </tr>
-             
-              </tbody>
+   	  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Date</th>
+      <th scope="col">Seller</th>
+      <th scope="col">Customer</th>
+
+      <th scope="col">Product Name</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Cost</th>
+      <th scope="col">Issuer</th>
+      <th scope="col">Issued</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="sale in sales" v-if="sale.sales_authorized" v-cloak>
+      <th scope="row" v-cloak>[[sale.id]]</th>
+      <td v-cloak> [[sale.created_at]] </td>
+      <td v-cloak v-for="user in users" v-if="user.id==sale.user"> <span v-for="employee in employees" v-if="employee.user == user.id" v-cloak>
+      	[[employee.employee_firstname]]
+      </span>
+      </td>
+      <td v-cloak v-for="customer in customers" v-if="sale.customer == customer.id">  [[customer.customer_name]]</td>
+<!--       <td v-cloak>  Issuer</td>
+ -->      <td v-if="item.id == sale.item" v-for ="item in items" v-cloak>[[item.item_name]]</td>
+      <td v-cloak>[[sale.sales_quantity]]</td>
+      <td v-cloak>[[sale.sales_amount]]</td>
+<!-- issuers row -->
+		<td v-cloak>
+		<span v-cloak v-for="user in users" v-if="user.id==sale.issueuser" >
+       	<span v-for="employee in employees" v-if="sale.sales_issue_item && employee.user == user.id" v-cloak>[[employee.employee_firstname]]</span>
+       </span>
+			
+		</td>
+       
+
+	  <td v-cloak v-if="sale.sales_issue_item">
+	  <i class="fa fa-check" style="font-size:24;color:green"></i>
+	   </td>
+	  <td v-cloak v-if="!sale.sales_issue_item"> <i class="fa fa-close" style="font-size:24px;color:red"></i></td>
+      
+    </tr>
+    
+  </tbody>
             </table>
           </div>
+          	
+
+          </div>
+          
           
 
 {%endblock%}
@@ -222,27 +299,54 @@
    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.core.min.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"></script>
 
-   <script >
-   	new Vue({
+ 
+   {%block script%}
+
+     <script >
+   	vmsearch=new Vue({
   delimiters: ['[[', ']]'],
   el: '#search',
   data: {
     search: '',
-    sales:'',
-    title:'',
+    totalsale:'',
+       
+  },
+  methods:{
+  	
+
+  },
+  beforeMount(){
+  	}
+  
+})
+
+
+   	
+   	new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#salestable',
+  data:{
+  	tablename:'Sales',
+  	sales:'',
+  	title:'',
     totalsale:0,
-    itemuser:1,
-    
+    itemuser:'',
+    items:'',
+	users:'',
+	employees:'',
+	customers:'',
   },
   methods:{
   	getSales:function(){
   		this.title='fetching data'
-  		 this.$http.get('/api/sale')
+  		// this function is overwritten to get all sales regardless of the user requesting this object
+  		 this.$http.get('/api/sale/'+1)
   		 .then(function(response){
   		 	this.sales=response.data.serial
   		 	this.title='data fetched'
-  		 	this.itemuser= 1
+  		 	this.itemuser= response.data.userid
   		 	this.totalsale=this.getToatalSales(this.sales)
+  		 	vmsearch.totalsale=this.totalsale
   		 })
   		 .catch(function(error){
   		 	this.title='error getting salse'
@@ -252,23 +356,61 @@
 
   		var amount=0;  	
 		$.each(sales,function(key, value) {
-			     if(value.sales_received){
+			     if(value.sales_received && value.sales_authorized){
 			     	amount+=value.sales_amount
 				     }
 				 });
 		
 		return amount;
-  	}
+  	},
+  	  	getItems:function(){
+		 this.$http.get('/api/item')
+		 .then(function(response){
+		 	this.items=response.data
+		 })
+		 .catch(function(error){
+		 	this.title='error getting items'
+		 })
+  	},
+  	getUsers:function(){
+		 this.$http.get('/api/user')
+		 .then(function(response){
+		 	this.users=response.data
+		 })
+		 .catch(function(error){
+		 	this.title='error getting items'
+		 })
+  	},
+  	getEmployees:function(){
+		 this.$http.get('/api/employee')
+		 .then(function(response){
+		 	this.employees=response.data
+		 })
+		 .catch(function(error){
+		 	this.title='error getting items'
+		 })
+  	},
+  	getCustomers:function(){
+		 this.$http.get('/api/customer')
+		 .then(function(response){
+		 	this.customers=response.data
+		 })
+		 .catch(function(error){
+		 	this.title='error getting items'
+		 })
+  	},
 
   },
   beforeMount(){
   		this.getSales()
+  		this.getItems()
+  		this.getUsers()
+  		this.getEmployees()
+		this.getCustomers()
   	}
-  
-})
 
+   	})
    </script>
-   {%block script%}
 
    {%endblock%}
 

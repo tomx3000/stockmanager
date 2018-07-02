@@ -121,7 +121,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
 
 # some custom fixed value
 FIXE_VALUE = 3
+
+# EMAIL_HOST='smtp.gmail.com'
+# EMAIL_PORT=587
+# EMAIL_HOST_USER='tomx3000@gmail.com'
+# EMAIL_HOST_PASSWORD='Dx2cmdtom'
+# EMAIL_USE_TLS=True
+# EMAIL_USE_SSL=False
+
+STATIC_URL = '/static/'
