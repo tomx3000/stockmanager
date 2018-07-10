@@ -4,16 +4,130 @@ from django.views import View
 from django.contrib import messages
 
 
-from .models import Sales,Store,Employee,Company,Customer,Inventory,Item
+from .models import Sales,Store,Employee,Company,Customer,Inventory,Item,Account,Expense
 from .forms import ItemForm
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 # Create your views here.
 
 pathselector={1:'base',2:'base',3:'order',4:'expense',5:'counter'}
 
 privillage={'sales':3,'admin':1,'assistantadmin':2,'bursar':4,'godown':5}
+
+@csrf_exempt
+def resetPassword(request,*args,**kargs):
+
+	user= User.objects.get(id=kargs['id'])
+
+	print('gotcha create something')
+	import random
+	import string
+
+	def generateRoandom(size=4,chars=string.ascii_lowercase+string.ascii_uppercase+string.digits):
+
+		return ''.join(random.choice(chars) for _ in range(size))
+
+	password=generateRoandom(8)
+
+	user.set_password(password)
+	employee=Employee.objects.get(user=user.id)
+
+	admin = Employee.objects.filter(employee_privillage=1)
+	email=admin.first().employee_email
+		
+
+
+	# sending login credential to admin or user them selves
+	send_mail(
+		    'Resetin Password',
+		    'OCEANIC \n firstname :'+employee.employee_firstname+'\n'+'username :'+user.username+'\n password: '+password,
+		    'tomx3000@gmail.com',
+		    [email],
+		    fail_silently=False,
+		   
+		)
+
+	return HttpResponse('done')
+
+
+@csrf_exempt
+def ChangePassword(request,*args,**kargs):
+	user = authenticate(request, username=kargs['username'], password=kargs['oldpassword'])
+
+	if user is not None:
+
+		if kargs['firstnewpassword'] == kargs['secondnewpassword']:		
+			user.set_password(kargs['firstnewpassword'])
+			user.save()
+			return HttpResponse('good')
+		else:
+			return HttpResponse('notmatched')
+
+	else:
+		return HttpResponse('badold')
+
+@csrf_exempt
+def ChangeUsername(request,*args,**kargs):
+	try:
+		user=User.objects.get(username=kargs['username'])
+
+	except Exception as e:
+		User.objects.filter(id=kargs['id']).update(username=kargs['username'])
+		return HttpResponse('good')
+	else:
+		return HttpResponse('bad')
+@csrf_exempt
+def increaseAccount(request,*args,**kargs):
+	account=Account.objects.filter(id=kargs['id'])
+	account.update(account_amount=float(account.first().account_amount)+float(kargs['amount']))
+	return HttpResponse('ok')
+
+
+@csrf_exempt
+def decreaseAccount(request,*args,**kargs):
+	account=Account.objects.filter(id=kargs['id'])
+	account.update(account_amount=float(account.first().account_amount)-float(kargs['amount']))
+	return HttpResponse('ok')
+
+@csrf_exempt
+def updateUpDownAccount(request,*args,**kargs):
+	expense=Expense.objects.filter(id=kargs['id'])
+
+	account=Account.objects.filter(id=expense.first().expense_account.id)
+	account.update(account_amount=float(account.first().account_amount)-(float(kargs['amount'])-float(expense.first().expense_amount)))
+	print('current expense amount')
+	print(float(expense.first().expense_amount))
+	print('entered value')
+	print(float(kargs['amount']))
+	print('balance')
+	print(float(account.first().account_amount))
+	print('adjusted balance')
+	adjustedval=float(account.first().account_amount)-(float(kargs['amount'])-float(expense.first().expense_amount))
+	print(adjustedval)
+	print(kargs['id'])
+
+	# print(request.POST)
+	return HttpResponse(adjustedval)
+
+@csrf_exempt	
+def increseItem(request,*args,**kargs):
+	item=Item.objects.filter(id=kargs['id'])
+	item.update(item_size=float(item.first().item_size)+float(kargs['quantity']))
+	return HttpResponse('ok')
+	
+
+@csrf_exempt
+def decreaseItem(request,*args,**kargs):
+	item=Item.objects.filter(id=kargs['id'])
+	item.update(item_size=float(item.first().item_size)-float(kargs['quantity']))
+	return HttpResponse('ok')
+
 
 @csrf_exempt
 def AcceptSale(request,*args,**kargs):
@@ -66,6 +180,12 @@ def AcceptSaleAll(request,*args,**kargs):
 
 @csrf_exempt
 def DeclineSaleAll(request,*args,**kargs):
+	sales=Sales.objects.filter(sales_received=False)
+	if sales.exists() and sales.count()>=1:
+		for sale in sales:
+			# updating the quantity of item sold 
+			item=Item.objects.filter(id=sale.item.id)
+			item.update(item_size=item.first().item_size+sale.sales_quantity)
 	
 	Sales.objects.filter(sales_received=False).delete()
 	
@@ -83,7 +203,11 @@ class MyView(View):
 
 		sale_order.save()
 		return HttpResponse('ok')
-class HomePage(View):
+
+
+
+class HomePage(LoginRequiredMixin,View):
+	login_url = '/login/'
 	def get(self,request,*args,**kagrs):
 		form=ItemForm()
 
@@ -95,6 +219,10 @@ class HomePage(View):
 			return redirect(pathselector[request.user.employee.employee_privillage])
 
 
+
+
+
+@login_required(login_url='/login/')
 def ViewOrder(request,*args,**kargs):
 
 	user = request.user
@@ -106,7 +234,7 @@ def ViewOrder(request,*args,**kargs):
 
 		
 
-
+@login_required(login_url='/login/')
 def ViewProduct(request,*args,**kargs):
 	user = request.user
 	
@@ -116,6 +244,9 @@ def ViewProduct(request,*args,**kargs):
 	else:
 		return redirect(pathselector[request.user.employee.employee_privillage])
 
+
+
+@login_required(login_url='/login/')
 def ViewCustomer(request,*args,**kargs):
 	user = request.user
 	# access to the order/sales page limited to admin 1 and 2 and sales person 3
@@ -124,6 +255,9 @@ def ViewCustomer(request,*args,**kargs):
 	else:
 		return redirect(pathselector[request.user.employee.employee_privillage])
 
+
+
+@login_required(login_url='/login/')
 def ViewCounter(request,*args,**kargs):
 
 	user = request.user
@@ -135,6 +269,7 @@ def ViewCounter(request,*args,**kargs):
 		return redirect(pathselector[request.user.employee.employee_privillage])
 
 
+@login_required(login_url='/login/')
 def ViewSettings(request,*args,**kargs):
 
 	# less than 2 is admin
@@ -146,7 +281,7 @@ def ViewSettings(request,*args,**kargs):
 		return redirect(pathselector[request.user.employee.employee_privillage])
 
 
-
+@login_required(login_url='/login/')
 def ViewExpense(request,*args,**kargs):
 
 	user = request.user
@@ -157,8 +292,12 @@ def ViewExpense(request,*args,**kargs):
 	else:
 		return redirect(pathselector[request.user.employee.employee_privillage])
 
-
-
+@login_required(login_url='/login/')
+def ViewProfile(request,*args,**kargs):
+	user = request.user
+	
+	return render(request,'inventory/profile.html',{'user':user})
+	
 	
 def ViewLogin(request,*args,**kargs):
 	form=ItemForm()
@@ -176,12 +315,13 @@ def ViewLogin(request,*args,**kargs):
 		    return redirect('base')
 
 		else:
-			return render(request,'inventory/login.html',{'form':form})	
+			return render(request,'inventory/login.html',{})	
 
 	elif(request.method=='GET'):
 		return render(request,'inventory/login.html',{'form':form})		
 
-	
+
+@login_required(login_url='/login/')
 def ViewAuthorize(request,*args,**kargs):
 
 	# less than 2 is admin
@@ -190,6 +330,8 @@ def ViewAuthorize(request,*args,**kargs):
 		return render(request,'inventory/authorize.html',{})
 	else:
 		return redirect(pathselector[request.user.employee.employee_privillage])
+
+
 
 
 # print(args)

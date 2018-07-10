@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
 
 <!--      <meta name='viewport' content='width=device-width, initial-scale=1.0'>
  -->  
@@ -26,6 +26,10 @@
 	[v-cloak]{
 		display: none;
 	}
+
+	::-webkit-scrollbar {
+display: none;}
+
 </style>
 
 {%block style%}
@@ -35,19 +39,22 @@
 {%endblock%}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 
   </head>
 
   <body>
-  <div >
-  	
-  	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-2 mr-0" href="#">Oceanic : {{user.username}}
+{%block inputsearch%}
+
+   <div id="searchsaledash">
+    
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow row ">
+      <a class="navbar-brand col-2 col-sm-2 col-md-2 col-lg-2  mr-0 " href="#">Oceanic : {{user.username}}
       </a>
-      <input class="form-control form-control-dark col-8 w-100" type="text" placeholder="Search" aria-label="Search" >
-      <ul class="navbar-nav px-3 col-2">
-      
+      <input class="form-control form-control-dark col-5 col-sm-5 col-md-8 col-lg-8 w-100" type="text" placeholder="Search" aria-label="Search" v-model="searchfiledsaledash" v-on:keyup.enter="getOrderDash">
+      <button class='btn btn-outline-secondary my-2 my-sm-0 col-2 col-sm-2 col-md-1 col-lg-1' v-cloak v-on:click.prevent="getOrderDash()">search</button>
+      <ul class="navbar-nav px-3 col-3 col-sm-3 col-md-1 col-lg-1">
         <li class="nav-item text-nowrap ">
           <a class="nav-link" href="/login/">Sign out</a>
         </li>
@@ -55,11 +62,12 @@
     </nav>
 
   </div>
-    
+    {%endblock%}
 
     <div class="container-fluid">
       <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 bg-light sidebar w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left " style="width:200px;" id="mySidebar">
+         <button class="w3-bar-item w3-button w3-large w3-hide-large" onclick="w3_close()"> &#9776;</button>
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
             {%if user.employee.employee_privillage <= 2 %}              <li class="nav-item">
@@ -128,17 +136,12 @@
               </li>
               {%endif%}
               <li class="nav-item">
-                <a class="nav-link" href="{%url 'counter' %}">
+                <a class="nav-link" href="{%url 'profile' %}">
                   <span data-feather="file-text"></span>
                   Profile
                 </a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{%url 'counter' %}">
-                  <span data-feather="file-text"></span>
-                  Alerts
-                </a>
-              </li>
+              
               {%if user.employee.employee_privillage <= 2 %}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'settings' %}">
@@ -154,21 +157,37 @@
           </div>
         </nav>
 
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 w3-main" style="margin-left:200px">
+        <div class="w3-dark">
+  <button class="w3-button w3-dark w3-xlarge w3-hide-large" onclick="w3_open()">&#9776;</button>
+</div>
         {%block content%}
         
 
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
             <h1 class="h2" v-cloak>Tsh [[totalsale]]</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
-              <div class="btn-group mr-2">
+       <!--        <div class="btn-group mr-2">
                 <button class="btn btn-sm btn-outline-secondary">Share</button>
                 <button class="btn btn-sm btn-outline-secondary">Export</button>
-              </div>
-              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                <span data-feather="calendar"></span>
-                This week
-              </button>
+              </div> -->
+
+
+          <div class="dropdown">
+		  <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		   <span data-feather="calendar"></span>
+		                Sales
+		  </button>
+		  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+		    <a class="dropdown-item" href="#" v-on:click="filterDate('all')">All</a>
+		    <a class="dropdown-item" href="#" v-on:click="filterDate('thisweek')">This week </a>
+		    <a class="dropdown-item" href="#" v-on:click="filterDate('thismonth')">This Month</a>
+		    <a class="dropdown-item" href="#" v-on:click="filterDate('last7days')">Last 7 Days</a>
+		    <a class="dropdown-item" href="#" v-on:click="filterDate('today')">Today</a>
+		    <a class="dropdown-item" href="#" v-on:click="filterDate('yesterday')">Yesterday</a>
+
+		  </div>
+			</div>
             </div>
           </div>
 
@@ -181,7 +200,7 @@
             <table class="table table-striped table-sm">
    	  <thead>
     <tr>
-      <th scope="col">#</th>
+      <th scope="col">No</th>
       <th scope="col">Date</th>
       <th scope="col">Seller</th>
       <th scope="col">Customer</th>
@@ -196,7 +215,7 @@
   <tbody>
     <tr v-for="sale in sales" v-if="sale.sales_authorized" v-cloak>
       <th scope="row" v-cloak>[[sale.id]]</th>
-      <td v-cloak> [[sale.created_at]] </td>
+      <td v-cloak> [[parseDate(sale.created_at)]] </td>
       <td v-cloak v-for="user in users" v-if="user.id==sale.user"> <span v-for="employee in employees" v-if="employee.user == user.id" v-cloak>
       	[[employee.employee_firstname]]
       </span>
@@ -239,10 +258,23 @@
       </div>
     </div>
 
+        <script>
+function w3_open() {
+    document.getElementById("mySidebar").style.display = "block";
+    // alert("open");
+}
+function w3_close() {
+    document.getElementById("mySidebar").style.display = "none";
+    // alert("close");
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+
+
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <!-- <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script> -->
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js' integrity='sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q' crossorigin='anonymous'></script>
@@ -256,7 +288,11 @@
 
     <!-- Graphs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+
+    
+
     <script>
+
       var ctx = document.getElementById("myChart");
       var myChart = new Chart(ctx, {
         type: 'line',
@@ -299,9 +335,18 @@
    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.core.min.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"></script>
 
- 
-   {%block script%}
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
+<script type="text/javascript">
+	// $.notify('i am here');
 
+</script>
+    
+
+ <script>
+    moment().format();
+</script>
+   {%block script%}
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
      <script >
    	vmsearch=new Vue({
   delimiters: ['[[', ']]'],
@@ -309,9 +354,13 @@
   data: {
     search: '',
     totalsale:'',
+
        
   },
   methods:{
+  	filterDate:function(span){
+  		vmsale.filterDate(span);
+  	}
   	
 
   },
@@ -321,8 +370,53 @@
 })
 
 
+new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#searchsaledash',
+  data:{
+    searchfiledsaledash:'',
+    title:''
+
+  },methods:{
+    getOrderDash:function(){
+           let api_url='/api/sale';
+      if(this.searchfiledsaledash!==''||this.searchfiledsaledash!==null){
+        api_url='/api/sale/?search='+this.searchfiledsaledash;
+      }
+
+     this.$http.get(api_url)
+     .then(function(response){
+
+      vmsale.sales=response.data
+
+      if(vmsale.filterlastseven)
+  		 	vmsale.sales=vmsale.getFilteredSale(vmsale.sales,'last7days');
+  		 	else if(vmsale.filterthismonth)
+  		 	vmsale.sales=vmsale.getFilteredSale(vmsale.sales,'thismonth');
+  		 	else if(vmsale.filterthisweek)
+  		 	vmsale.sales=vmsale.getFilteredSale(vmsale.sales,'thisweek');
+  		 	else if(vmsale.filterall)
+  		 	vmsale.sales=vmsale.getFilteredSale(vmsale.sales,'all');
+  		 	else if(vmsale.filtertoday)
+  		 	vmsale.sales=vmsale.getFilteredSale(vmsale.sales,'today');
+  		 	else if(vmsale.filteryesterday)
+  		 	vmsale.sales=vmsale.getFilteredSale(vmsale.sales,'yesterday');
+
+  		 	vmsale.totalsale=vmsale.getToatalSales(vmsale.sales)
+  		 	vmsearch.totalsale=vmsale.totalsale
+      // this.alertOnMininumIrem(this.items)
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+    }
+  }
+
+
+})
+
    	
-   	new Vue({
+   	vmsale=new Vue({
   delimiters: ['[[', ']]'],
   el: '#salestable',
   data:{
@@ -335,16 +429,36 @@
 	users:'',
 	employees:'',
 	customers:'',
+	filtertoday:false,
+	filterall:false,
+	filteryesterday:false,
+	filterthisweek:false,
+	filterthismonth:false,
+	filterlastseven:true,
   },
   methods:{
   	getSales:function(){
   		this.title='fetching data'
   		// this function is overwritten to get all sales regardless of the user requesting this object
-  		 this.$http.get('/api/sale/'+1)
+  		 this.$http.get('/api/sale/')
   		 .then(function(response){
-  		 	this.sales=response.data.serial
+  		 	this.sales=response.data
   		 	this.title='data fetched'
-  		 	this.itemuser= response.data.userid
+  		 	// this.itemuser= response.data.userid
+
+  		 	if(this.filterlastseven)
+  		 	this.sales=this.getFilteredSale(this.sales,'last7days');
+  		 	else if(this.filterthismonth)
+  		 	this.sales=this.getFilteredSale(this.sales,'thismonth');
+  		 	else if(this.filterthisweek)
+  		 	this.sales=this.getFilteredSale(this.sales,'thisweek');
+  		 	else if(this.filterall)
+  		 	this.sales=this.getFilteredSale(this.sales,'all');
+  		 	else if(this.filtertoday)
+  		 	this.sales=this.getFilteredSale(this.sales,'today');
+  		 	else if(this.filteryesterday)
+  		 	this.sales=this.getFilteredSale(this.sales,'yesterday');
+
   		 	this.totalsale=this.getToatalSales(this.sales)
   		 	vmsearch.totalsale=this.totalsale
   		 })
@@ -399,9 +513,123 @@
 		 	this.title='error getting items'
 		 })
   	},
+  	parseDate:function(date){
+  		
+  		return moment(date).format('LLLL')
+
+  	},
+  	getFilteredSale:function(sales,key){
+  			// filters sales for the past seven days
+  		var today=moment();
+  		var newsale;
+  		// this.getSales();
+  		if(key=='last7days'){
+  			// alert(key)
+  			var lastsevendays=moment().subtract(7,'d');
+  		newsale = sales.filter(function(sale){
+  			return moment(sale.created_at).isBetween(lastsevendays,today)
+  		})
+
+  		}else if (key=='thisweek'){
+  			console.log(key)
+  			
+  		newsale = sales.filter(function(sale){
+  			return moment(sale.created_at).isSame(today,'week')
+  		})
+
+  		}else if (key=='today'){
+  			console.log(key)
+  			newsale = sales.filter(function(sale){
+  			return moment(sale.created_at).isSame(today,'day')})
+  			
+  		}else if (key=='yesterday'){
+  			console.log(key)
+  		var yesterday=moment().subtract(1,'d');
+  		newsale=sales.filter(function(sale){
+
+  			return moment(sale.created_at).isSame(yesterday,'day')
+  		})
+
+  			
+  		}else if (key=='thismonth'){
+  			console.log(key)
+  			newsale = sales.filter(function(sale){
+  			return moment(sale.created_at).isSame(today,'month')
+  		})
+  			
+  		}else if (key=='all'){
+  			console.log(key)
+  			newsale=sales;
+  			
+  		}
+  		
+		// alert(newsale)
+
+		return newsale;
+
+  	},
+  	filterDate:function(key){
+  		// filters sales for the past seven days
+   		this.filtertoday=false;
+		this.filterall=false;
+		this.filteryesterday=false;
+		this.filterthisweek=false;
+		this.filterthismonth=false;
+		this.filterlastseven=false;
+  		// this.getSales();
+  		if(key=='last7days')
+  		this.filterlastseven=true;
+  		else if (key=='thisweek')
+  		this.filterthisweek=true;
+		else if (key=='today')
+  		this.filtertoday=true;	
+  		else if (key=='yesterday')
+  		this.filteryesterday=true;
+  		else if (key=='thismonth')  	
+  		this.filterthismonth=true;
+		else if (key=='all')
+  		this.filterall=true;
+
+  		this.getSales();
+  				
+		
+  		
+  	},
+  	lastSeven:function(date){
+  		lastweek=moment('2018-07-8').subtract(7,'d')
+  		if(moment(date).isBetween(lastweek,'2018-07-30')){
+  			majic='week';
+  		}else majic='not week';
+  	},
+  	thisWeek:function(){
+  		// filters sales for this week
+  		var sales=this.sales;
+  		newsale = this.sales.filter(function(sale){
+  			return moment(sale.created_at).isSame(moment(),'week')
+  		})
+  		this.sales=newsale;
+
+  		
+
+  	},thisMonth:function(date){
+  		datex='2018-07-30';
+  		return moment(date).isSame(datex,'week')+" "+moment(date).format('LLLL');
+
+  	},getUserid:function(){
+      this.$http.get('/api/company')
+     .then(function(response){
+      // this.company=response.data.serial
+      this.itemuser=response.data.userid
+      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+    }
 
   },
   beforeMount(){
+  		this.getUserid()
   		this.getSales()
   		this.getItems()
   		this.getUsers()

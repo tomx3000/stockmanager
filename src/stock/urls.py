@@ -19,17 +19,34 @@ from django.urls import  path,include
 from .routers import router
 from django.views.generic import TemplateView
 
-from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale
+from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale,ViewProfile,ChangeUsername,ChangePassword,increseItem,decreaseItem,increaseAccount,decreaseAccount,updateUpDownAccount,resetPassword
 
 urlpatterns = [
 path('admin/', admin.site.urls),
+
 # sales
 path('sale/<slug:id>/', AcceptSale),
+path('username/<slug:id>/<slug:username>/', ChangeUsername),
+path('userpass/<slug:id>/<slug:oldpassword>/<slug:firstnewpassword>/<slug:secondnewpassword>/<slug:username>/', ChangePassword),
+
+# items
+path('increaseitem/<slug:id>/<slug:quantity>/',increseItem ),
+path('decreaseItem/<slug:id>/<slug:quantity>/',decreaseItem ),
+
+# account
+path('increaseaccount/<slug:id>/<slug:amount>/',increaseAccount ),
+path('decreaseaccount/<slug:id>/<slug:amount>/',decreaseAccount ),
+path('updownaccount/<slug:id>/<slug:amount>/',updateUpDownAccount ),
+
+# user
+path('resetpass/<slug:id>/', resetPassword),
+
 # path('getallsales/', GetAllSale),
 path('saledecline/', DeclineSaleAll),
 path('saleaccept/', AcceptSaleAll),
 path('authorizesale/<slug:id>/', AuthorizeSale),
 path('issuesale/<slug:id>/', IssueSale),
+
 
 # path('/sale/', MyView.as_view()),
 
@@ -42,7 +59,7 @@ path('expense/', ViewExpense,name='expense'),
 path('customer/', ViewCustomer,name='customer'),
 path('settings/', ViewSettings,name='settings'),
 path('authorize/', ViewAuthorize,name='authorize'),
-
+path('profile/', ViewProfile,name='profile'),
 path('login/', ViewLogin,name='login'),
 
 

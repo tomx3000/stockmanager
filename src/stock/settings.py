@@ -25,7 +25,7 @@ SECRET_KEY = 'q6d&4os-%1j+)t)5^eztg3sjh7!#41u4%g8a2v=dgpiy%8_vvz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.tom.com','www.oceanic.com']
+ALLOWED_HOSTS = ['www.tom.com','www.oceanic.com','192.168.43.43','192.168.0.101','192.168.0.100']
 
 
 # Application definition
@@ -125,11 +125,11 @@ USE_TZ = True
 # some custom fixed value
 FIXE_VALUE = 3
 
-# EMAIL_HOST='smtp.gmail.com'
-# EMAIL_PORT=587
-# EMAIL_HOST_USER='tomx3000@gmail.com'
-# EMAIL_HOST_PASSWORD='Dx2cmdtom'
-# EMAIL_USE_TLS=True
-# EMAIL_USE_SSL=False
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_HOST_USER='tomx3000@gmail.com'
+EMAIL_HOST_PASSWORD='Dx2cmdtom'
+EMAIL_USE_TLS=True
+EMAIL_USE_SSL=False
 
 STATIC_URL = '/static/'
