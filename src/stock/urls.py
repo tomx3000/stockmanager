@@ -69,7 +69,7 @@ path('inventory/', include('inventory.urls')),
 path('api/',include(router.urls)),
 
 # path('home/',TemplateView.as_view(template_name='home/base.html'),name='base'),
-path('home/',HomePage.as_view(),name='base'),
+path('',HomePage.as_view(),name='base'),
 
 
 ]

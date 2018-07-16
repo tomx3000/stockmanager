@@ -240,6 +240,7 @@ new Vue({
   	},
   	computed:{
   		computesales:function(){
+  			this.getUserid()
 
   		this.title='fetching data'
   		// note :
@@ -248,7 +249,7 @@ new Vue({
   		 .then(function(response){
   		 	this.sales=response.data.serial
   		 	this.title='data fetched'
-  		 	this.user= response.data.userid
+  		 	// this.user= response.data.userid
   		 	// alert("welcome")
   		 	// this.totalacceptsale=this.getTotalAcceptSales(this.sales)
   		 	this.totalsale=this.getToatalSales(this.sales)
