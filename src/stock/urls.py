@@ -19,10 +19,14 @@ from django.urls import  path,include
 from .routers import router
 from django.views.generic import TemplateView
 
-from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale,ViewProfile,ChangeUsername,ChangePassword,increseItem,decreaseItem,increaseAccount,decreaseAccount,updateUpDownAccount,resetPassword
+from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale,ViewProfile,ChangeUsername,ChangePassword,increseItem,decreaseItem,increaseAccount,decreaseAccount,updateUpDownAccount,resetPassword,CustomerFile,AcceptCustomerOder,DeclineCustomerOder,AuthorizeCustomerOrder,IssueCustomerOrder,ItemFile
 
 urlpatterns = [
 path('admin/', admin.site.urls),
+
+path('customerfile/', CustomerFile),
+path('itemfile/', ItemFile),
+
 
 # sales
 path('sale/<slug:id>/', AcceptSale),
@@ -44,8 +48,13 @@ path('resetpass/<slug:id>/', resetPassword),
 # path('getallsales/', GetAllSale),
 path('saledecline/', DeclineSaleAll),
 path('saleaccept/', AcceptSaleAll),
+path('saleaccept/<slug:customerid>/', AcceptCustomerOder),
+path('saledecline/<slug:customerid>/', DeclineCustomerOder),
 path('authorizesale/<slug:id>/', AuthorizeSale),
+path('authorizecustomerorder/<slug:customerid>/', AuthorizeCustomerOrder),
 path('issuesale/<slug:id>/', IssueSale),
+path('issuecustomerorder/<slug:customerid>/', IssueCustomerOrder),
+
 
 
 # path('/sale/', MyView.as_view()),
@@ -61,9 +70,6 @@ path('settings/', ViewSettings,name='settings'),
 path('authorize/', ViewAuthorize,name='authorize'),
 path('profile/', ViewProfile,name='profile'),
 path('login/', ViewLogin,name='login'),
-
-
-
 
 path('inventory/', include('inventory.urls')),
 path('api/',include(router.urls)),

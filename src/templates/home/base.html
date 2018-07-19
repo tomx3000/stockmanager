@@ -30,6 +30,10 @@
 	::-webkit-scrollbar {
 display: none;}
 
+	li {
+		overflow: auto;
+	}
+
 </style>
 
 {%block style%}
@@ -165,7 +169,7 @@ display: none;}
         
 
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
-            <h1 class="h2" v-cloak>Tsh [[totalsale]]</h1>
+            <h1 class="h2" v-cloak> [[totalsale]]</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
        <!--        <div class="btn-group mr-2">
                 <button class="btn btn-sm btn-outline-secondary">Share</button>
@@ -174,7 +178,7 @@ display: none;}
 
 
           <div class="dropdown">
-		  <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		  <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		   <span data-feather="calendar"></span>
 		                Sales
 		  </button>
@@ -474,7 +478,7 @@ new Vue({
 			     	amount+=value.sales_amount
 				     }
 				 });
-		
+		amount = 'Tsh' + amount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 		return amount;
   	},
   	  	getItems:function(){
