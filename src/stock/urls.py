@@ -19,7 +19,7 @@ from django.urls import  path,include
 from .routers import router
 from django.views.generic import TemplateView
 
-from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale,ViewProfile,ChangeUsername,ChangePassword,increseItem,decreaseItem,increaseAccount,decreaseAccount,updateUpDownAccount,resetPassword,CustomerFile,AcceptCustomerOder,DeclineCustomerOder,AuthorizeCustomerOrder,IssueCustomerOrder,ItemFile
+from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale,ViewProfile,ChangeUsername,ChangePassword,increseItem,decreaseItem,increaseAccount,decreaseAccount,updateUpDownAccount,resetPassword,CustomerFile,AcceptCustomerOder,DeclineCustomerOder,AuthorizeCustomerOrder,IssueCustomerOrder,ItemFile,UpdateSalesPaymentMethod,UpdateCustomerSalesPaymentMethod
 
 urlpatterns = [
 path('admin/', admin.site.urls),
@@ -32,6 +32,12 @@ path('itemfile/', ItemFile),
 path('sale/<slug:id>/', AcceptSale),
 path('username/<slug:id>/<slug:username>/', ChangeUsername),
 path('userpass/<slug:id>/<slug:oldpassword>/<slug:firstnewpassword>/<slug:secondnewpassword>/<slug:username>/', ChangePassword),
+
+path('paymentmethod/<slug:saleid>/<slug:cash>/', UpdateSalesPaymentMethod),
+path('customerpayment/<slug:customerid>/<slug:cash>/', UpdateCustomerSalesPaymentMethod),
+
+
+
 
 # items
 path('increaseitem/<slug:id>/<slug:quantity>/',increseItem ),
