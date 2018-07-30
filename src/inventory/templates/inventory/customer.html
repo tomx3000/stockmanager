@@ -1,5 +1,3 @@
-
-
 {%extends 'home/base.html'%}
 
 {%block style%}
@@ -11,12 +9,10 @@
   --input-padding-x: .75rem;
   --input-padding-y: .75rem;
 }
-
 html,
 body {
   height: 100%;
 }
-
 /*body {
   display: -ms-flexbox;
   display: flex;
@@ -26,24 +22,20 @@ body {
   padding-bottom: 40px;
   background-color: #f5f5f5;
 }*/
-
 .form-signin {
   width: 100%;
   max-width: 420px;
   padding: 15px;
   margin: auto;
 }
-
 .form-label-group {
   position: relative;
   margin-bottom: 1rem;
 }
-
 .form-label-group > input,
 .form-label-group > label {
   padding: var(--input-padding-y) var(--input-padding-x);
 }
-
 .form-label-group > label {
   position: absolute;
   top: 0;
@@ -57,41 +49,31 @@ body {
   border-radius: .25rem;
   transition: all .1s ease-in-out;
 }
-
 .form-label-group input::-webkit-input-placeholder {
   color: transparent;
 }
-
 .form-label-group input:-ms-input-placeholder {
   color: transparent;
 }
-
 .form-label-group input::-ms-input-placeholder {
   color: transparent;
 }
-
 .form-label-group input::-moz-placeholder {
   color: transparent;
 }
-
 .form-label-group input::placeholder {
   color: transparent;
 }
-
 .form-label-group input:not(:placeholder-shown) {
   padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
   padding-bottom: calc(var(--input-padding-y) / 3);
 }
-
 .form-label-group input:not(:placeholder-shown) ~ label {
   padding-top: calc(var(--input-padding-y) / 3);
   padding-bottom: calc(var(--input-padding-y) / 3);
   font-size: 12px;
   color: #777;
 }
-
-
-
 </style>
 
 {%endblock%}
@@ -221,7 +203,6 @@ body {
 
 {%block script%}
   <script >
-
 wm = new Vue({
   delimiters: ['[[', ']]'],
   el: '#searchcustomer',
@@ -231,14 +212,12 @@ wm = new Vue({
   }
   ,methods:{
     getCustomer:function(){
-      let api_url='/api/customer';
+      var api_url='/api/customer';
       if(this.searchfiledcustomer!==''||this.searchfiledcustomer!==null){
         api_url='/api/customer/?search='+this.searchfiledcustomer;
       }
-
      this.$http.get(api_url)
      .then(function(response){
-
       vmcustomer.customers=response.data
       // this.alertOnMininumIrem(this.items)
      })
@@ -246,11 +225,8 @@ wm = new Vue({
       this.title='error getting items'
      })
     },
-
   }
-
 })
-
  vmcustomer= new Vue({
   	delimiters: ['[[', ']]'],
   el: '#customerpage',
@@ -292,14 +268,13 @@ wm = new Vue({
         this.title='error getting items'
        })
         
-
       }  else{
     // this.$http.headers.common['X-CSRF-TOKEN']="{{csrf_token}}"
     	if(this.file){
   			
   			      // updating editing item
   		$.notify('Creating Customers','info');
-  		let formData = new FormData();
+  		var formData = new FormData();
 		formData.append('file', this.file);
 		formData.append('company', this.companyid);
 		axios.post( '/customerfile/',
@@ -310,7 +285,6 @@ wm = new Vue({
 		    }
 		  }
 		).then(function(response){
-
 		 this.title=response.data
 		 this.required=true
 		 $.notify(' Customers Created','success');
@@ -327,13 +301,10 @@ wm = new Vue({
 		.catch(function(){
 		  console.log('FAILURE!!');
 		});
-
  
        	
-
 		 		}
   		else{
-
   		 this.$http.post('/api/customer/',{'customer_name':this.customername,'customer_transport':this.customertransport,'customer_phone':this.customerphone,'customer_location':this.customerlocation,'company':this.companyid})
        .then(function(response){
         // this.items=response.data
@@ -348,20 +319,14 @@ wm = new Vue({
        .catch(function(error){
         this.title='error getting items'
        })
-
-
-
   		}
-
       }         
         
-
       e.preventDefault();
     },
     handleFileUpload:function(){
   		this.file = this.$refs.file.files[0];
   		this.required=false
-
   	},
   	getCustomer:function(){
   		this.$http.get('/api/customer')
@@ -392,13 +357,10 @@ wm = new Vue({
          this.customerphone=phone; 
          this.curentcustomerid=id;
          this.companyid=company
-
          this.button_create_edit_customer="Edit Customer";
         
   	},
   	getCompany:function(){
-
-
   	}
   }
   ,
@@ -406,8 +368,6 @@ wm = new Vue({
       this.getCustomer()
     }
   })
-
-
   </script>
 
  

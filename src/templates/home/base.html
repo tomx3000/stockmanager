@@ -241,7 +241,7 @@ display: none;}
        
 
 	  <td v-cloak v-if="sale.sales_issue_item">
-	  <i class="fa fa-check" style="font-size:24;color:green"></i>
+	  <i class="fa fa-check" style="font-size:24;color:green;"></i>
 	   </td>
 	  <td v-cloak v-if="!sale.sales_issue_item"> <i class="fa fa-close" style="font-size:24px;color:red"></i></td>
       
@@ -296,16 +296,38 @@ function w3_close() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 
     
-
-    <script>
+<script>
+var endpoint ='graph/data'
+var label=[]
+var dataset=[]
+$.ajax({
+	method:'GET',
+	url:endpoint,
+	success:function(data){
+		console.log(data.order_id)
+		dataset=data.data
+		label=data.label
 
       var ctx = document.getElementById("myChart");
+
+	  setGraph(ctx)
+
+	},
+	error:function(error){
+		console.log(error)
+
+	}
+})
+
+
+function setGraph(ctx){
+
       var myChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          labels: label,
           datasets: [{
-            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+            data: dataset,
             lineTension: 0,
             backgroundColor: 'transparent',
             borderColor: '#007bff',
@@ -326,6 +348,11 @@ function w3_close() {
           }
         }
       });
+}
+
+</script>
+    <script>
+
     </script>
     
 

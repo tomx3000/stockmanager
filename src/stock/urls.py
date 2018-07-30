@@ -19,7 +19,7 @@ from django.urls import  path,include
 from .routers import router
 from django.views.generic import TemplateView
 
-from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale,ViewProfile,ChangeUsername,ChangePassword,increseItem,decreaseItem,increaseAccount,decreaseAccount,updateUpDownAccount,resetPassword,CustomerFile,AcceptCustomerOder,DeclineCustomerOder,AuthorizeCustomerOrder,IssueCustomerOrder,ItemFile,UpdateSalesPaymentMethod,UpdateCustomerSalesPaymentMethod
+from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale,ViewProfile,ChangeUsername,ChangePassword,increseItem,decreaseItem,increaseAccount,decreaseAccount,updateUpDownAccount,resetPassword,CustomerFile,AcceptCustomerOder,DeclineCustomerOder,AuthorizeCustomerOrder,IssueCustomerOrder,ItemFile,UpdateSalesPaymentMethod,UpdateCustomerSalesPaymentMethod,OrderPdf,OrderPdf_Auto,getGraphBata
 
 urlpatterns = [
 path('admin/', admin.site.urls),
@@ -67,7 +67,8 @@ path('issuecustomerorder/<slug:customerid>/', IssueCustomerOrder),
 
 # path('home/', HomePage.as_view(),name='base'),
 path('order/', ViewOrder,name='order'),
-
+path('pdf/<slug:id>/', OrderPdf_Auto,name='orderpdfid'),
+path('pdf/', OrderPdf,name='orderpdf'),
 path('product/', ViewProduct,name='product'),
 path('counter/', ViewCounter,name='counter'),
 path('expense/', ViewExpense,name='expense'),
@@ -82,6 +83,10 @@ path('api/',include(router.urls)),
 
 # path('home/',TemplateView.as_view(template_name='home/base.html'),name='base'),
 path('',HomePage.as_view(),name='base'),
+
+# graph
+# graph/data
+path('graph/data/', getGraphBata,name='graphdata'),
 
 
 ]
