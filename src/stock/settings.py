@@ -127,8 +127,8 @@ FIXE_VALUE = 3
 
 EMAIL_HOST='smtp.gmail.com'
 EMAIL_PORT=587
-EMAIL_HOST_USER='tomx3000@gmail.com'
-EMAIL_HOST_PASSWORD='Dx2cmdtom'
+EMAIL_HOST_USER='info.company.tz@gmail.com'
+EMAIL_HOST_PASSWORD='t4tom24DNA'
 EMAIL_USE_TLS=True
 EMAIL_USE_SSL=False
 
