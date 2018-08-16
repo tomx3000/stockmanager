@@ -115,7 +115,7 @@ def OrderPdf_Auto(request, *args, **kwargs):
 	if request.user.employee.employee_privillage<=privillage['assistantadmin']:
 		sales=Sales.objects.filter(Q(sales_authorized=False )|Q(sales_method_payment='loan'),customer=customer)
 	else:
-		user=request.user,customer=customer
+		user=request.user
 
 		sales=Sales.objects.filter(sales_received=False,user=request.user,customer=customer)
 	employee= Employee.objects.get(user=request.user)
@@ -172,9 +172,11 @@ def resetPassword(request,*args,**kargs):
 	employee=Employee.objects.get(user=user.id)
 
 	admin = Employee.objects.filter(employee_privillage=1)
-	email=admin.first().employee_email
-		
 
+	# email=admin.first().employee_email
+
+	email=User.objects.get(id=request.user.id).employee.employee_email
+	
 
 	# sending login credential to admin or user them selves
 	send_mail(

@@ -1,0 +1,894 @@
+
+
+{%extends 'home/base.html'%}
+
+{%block style%}
+<!-- {% load static %}
+<link rel="stylesheet" href="{% static "css/floating-labels.css" %}" /> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+<style type="text/css">
+
+    :root {
+  --input-padding-x: .75rem;
+  --input-padding-y: .75rem;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/*body {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}*/
+
+.form-signin {
+  width: 100%;
+  max-width: 420px;
+  padding: 15px;
+  margin: auto;
+}
+
+.form-label-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.form-label-group > input,
+.form-label-group > label {
+  padding: var(--input-padding-y) var(--input-padding-x);
+}
+
+.form-label-group > label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  margin-bottom: 0; /* Override default `<label>` margin */
+  line-height: 1.5;
+  color: #495057;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  transition: all .1s ease-in-out;
+}
+
+.form-label-group input::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input:-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-moz-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::placeholder {
+  color: transparent;
+}
+
+.form-label-group input:not(:placeholder-shown) {
+  padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+  padding-bottom: calc(var(--input-padding-y) / 3);
+}
+
+.form-label-group input:not(:placeholder-shown) ~ label {
+  padding-top: calc(var(--input-padding-y) / 3);
+  padding-bottom: calc(var(--input-padding-y) / 3);
+  font-size: 12px;
+  color: #777;
+}
+
+
+</style>
+
+
+
+{%endblock%}
+{%block inputsearch%}
+
+   <div id="searchorder">
+    
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow row ">
+      <a class="navbar-brand col-2 col-sm-2 col-md-2 col-lg-2  mr-0 " href="#">Oceanic : {{user.username}}
+      </a>
+      <input class="form-control form-control-dark col-5 col-sm-5 col-md-8 col-lg-8 w-100" type="text" placeholder="Search" aria-label="Search" v-model="searchfiledsale" v-on:keyup.enter="getOrder">
+      <button class='btn btn-outline-secondary my-2 my-sm-0 col-2 col-sm-2 col-md-1 col-lg-1' v-cloak v-on:click.prevent="getOrder()">search</button>
+      <ul class="navbar-nav px-3 col-3 col-sm-3 col-md-1 col-lg-1">
+        <li class="nav-item text-nowrap ">
+          <a class="nav-link" href="/login/">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+
+  </div>
+    {%endblock%}
+
+
+{%block content%}
+
+<div id=app class="container" >
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="exampleModalLabel">Paid </h2>
+        <button type="button" class="close" data-dismiss="modal" v-on:click="runupdatesale()">
+        <i tyep="button" class="fa fa-check fa-md" style="font-size:24;color:green" ></i>
+        </button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" v-on:click="stopmodal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        
+        
+      </div>
+      <div class="modal-body ">
+
+             <!-- buttons selection -->
+  <div class="btn-group btn-group-toggle " data-toggle="buttons">
+  <label class="btn btn-secondary " v-on:click="setMethod('loan')">
+    <input type="radio" name="options" id="option1" autocomplete="off" checked> Loan
+  </label>
+  <label class="btn btn-secondary active" v-on:click="setMethod('cash')">
+    <input type="radio" name="options" id="option2" autocomplete="off"> Cash
+  </label>
+  <label class="btn btn-secondary" v-on:click="setMethod('bank')">
+    <input type="radio" name="options" id="option3" autocomplete="off"> Bank
+  </label>
+  <label class="btn btn-secondary" v-on:click="setMethod('mobile')">
+    <input type="radio" name="options" id="option3" autocomplete="off"> Mobile
+  </label>
+
+</div>
+<!-- end button selection -->
+  
+      </div>
+      <div class="modal-footer">
+   
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- end demo $$$$$$$$$$$$$$$$$$$$$$$$$$$$ -->
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
+
+  <h1 v-cloak >[[totalsale]] </h1>
+
+  
+</div>
+<div class='row' >
+	<div class='col-lg-8 col-md-8 col-sm-12 col-12'>
+	<div class="row">
+		   <form class="form-signin" v-on:submit="checkform">
+    {% csrf_token %}
+<!--       <div class="form-label-group">
+        <input type="text" id="inpuitemname" class="form-control" placeholder="Product name" v-model='selected' required autofocus>
+        <label for="inpuitemname">Item</label>
+      </div> -->
+      <div class="input-group mb-3">
+	  <div class="input-group-prepend" v-on:dblclick="resetCustomer()">
+	    <label class="input-group-text" for="inputGroupSelect03">Customer</label>
+	  </div>
+	  <select  v-cloak v-model="salecustomer" class="custom-select" id="inputGroupSelect03">
+	    <option disabled value="" >Choose</option>
+	    <option v-bind:value="customer.id" v-for="customer in customersselect" v-cloak>[[customer.customer_name]]:[[customer.customer_location]]</option>
+	  </select>
+	</div>
+
+<!--   <div class=" mb-3" >
+ 
+  <v-select label="customer_name" :options="customersselect"   v-model="salecustomer"   placeholder="Customer"></v-select>
+
+</div> -->
+
+   <!--    <div class="input-group mb-3">
+	  <div class="input-group-prepend">
+	    <label class="input-group-text" for="inputGroupSelect01">Product</label>
+	  </div>
+	  <select v-on:change="setPrice(selected)" v-cloak v-model="selected" class="custom-select" id="inputGroupSelect01">
+	    <option disabled value="" >Choose</option>
+	    <option v-bind:value="item.id" v-for="item in itemsselect" v-cloak>[[item.item_name]]</option>
+	  </select>
+	</div> -->
+<!-- sample select picker -->
+<div class=" mb-3">
+ 
+  <v-select label="item_name" :options="itemsselect"   v-model="selected" v-on:input="setPrice(selected)"  placeholder="Product"></v-select>
+
+</div>
+
+<!-- end select picker -->
+      <div class="form-label-group" v-cloak>
+        <input type="number" id="inputitemquantity" class="form-control" placeholder=" Quantity" v-model='salesquantity' required autofocus>
+        <!-- <label for="inputitemquantity" v-cloak>Quantity left [[quantityleft]] </label> -->
+        <label for="inputitemquantity" v-cloak>Quantity </label>
+      </div>
+      
+      <div class="form-label-group" v-cloak >
+        <input type="number" id="inputitemamount" class="form-control" placeholder="Amount" v-model='salesamount' required autofocus>
+        <label for="inputitemamount" v-cloak >minimum allowed price [[maxdiscount]]/= 
+        </label>
+      </div>
+
+      
+
+      <button class="btn btn-lg btn-outline-primary btn-block" type="submit">Take Order</button>
+      <!-- <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p> -->
+    </form>
+		
+	</div>
+
+	<div class="row"  style=" max-height: 500px;
+	overflow-y: auto;
+	overflow-x: auto;">
+
+	<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Date</th>
+      <th scope="col">Customer Name</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Cost</th>
+      <th scope="col">Paid</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="sale in sales" v-if="(sale.sales_received && !sale.sales_authorized && sale.user==itemuser) || (sale.sales_method_payment=='loan' && sale.user==itemuser) " v-cloak  >
+      <th scope="row" v-cloak>[[sale.id]]</th>
+      <td v-cloak> [[parseDate(sale.created_at)]] </td>
+      <td v-for="customer in customers" v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</td>
+      <td v-if="item.id == sale.item" v-for ="item in items" v-cloak>[[item.item_name]]</td>
+      <td v-cloak>[[sale.sales_quantity]]</td>
+      <td v-cloak>[[sale.sales_amount]]</td>
+      <td v-cloak>[[sale.sales_method_payment]]</td>
+    </tr>
+    
+  </tbody>
+</table>
+
+
+
+		
+</div>
+<!-- <ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+        <h6  class="my-0" > Total </h6>
+       
+      <div>
+       
+      </div>
+      	<h2 class="text-muted" v-cloak>  [[totalsale]] </h2>
+      </div>
+  </li>
+
+</ul> -->
+
+</div>
+
+<!-- begin order -->
+<div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 20px; max-height: 800px;
+  overflow-y: auto;
+  overflow-x: auto;">
+
+<div v-for="customer in customers" style="margin-bottom: 20px;" v-if="customer_has_order(customer)">
+  <ul class="list-group" >
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div class="container">
+   
+        <h4  class="" v-cloak>[[customer.customer_name]] </h4>
+        
+      </div>
+      <div class="container">
+
+      <h4 class="text-muted align-right" v-cloak>  [[customer_total_order(customer)]]</h4>
+
+      <a  href="#" v-on:click="prepOrderPdf(customer.id)">
+        
+      <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+
+      </a>
+
+        
+      </div>
+  </li>
+
+</ul> 
+<div >
+
+   <ul class="list-group">
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed" v-for= "sale in sales"  v-if="!sale.sales_received && sale.user==itemuser && sale.customer==customer.id " >
+                <div class="container">
+                  <h6 v-if="item.id == sale.item" class="my-0" v-for="item in items" v-cloak>[[item.item_name]] </h6>
+                  <small class="text-muted" v-cloak> [[sale.sales_quantity]] </small>
+                </div>
+                <div class="container">
+                <span v-cloak class="text-muted">Tsh [[sale.sales_amount]] </span>
+
+                <br>
+                <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
+                <button type="button" class="close" aria-label="Close" v-on:click="deleteSale(sale.id,sale.item,sale.sales_quantity)">
+
+                <span aria-hidden="true">&times;</span>
+          </button>
+            <i tyep="button" class="fa fa-check" style="font-size:24;color:green" v-on:click="prepsalemethodupdate(sale.id)" v-cloak data-toggle="modal" data-target="#exampleModal"></i>
+                  
+                </div>
+                
+              </li>
+
+   </ul>
+
+</div>
+    
+  
+ <button style="margin-top: 10px;" v-on:click="prepcustomersalemethodupdate(customer.id)" class='btn btn-outline-primary btn-small' data-toggle="modal" data-target="#exampleModal">Accept</button>
+  <button v-on:click="declineCustomerOrder(customer.id)" style="margin-top: 10px;" class='btn btn-outline-dark btn-small'>Decline</button>
+
+</div>
+
+</div>
+
+<!-- end order -->
+
+</div>
+
+</div>
+
+
+
+{%endblock%}
+
+{%block script%}
+
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
+
+
+ <script>
+    moment().format();
+</script>
+<script type="text/javascript">
+  // $.notify('order')
+
+</script>
+  <script >
+
+// Vue.http.interceptors.push(function (request, next) {
+//     request.headers['X-CSRF-TOKEN'] = Laravel.csrfToken;
+//     next();
+// });
+   		// alert(csrftoken)
+
+// 
+// 
+
+Vue.component('v-select', VueSelect.VueSelect);
+
+new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#searchorder',
+  data:{
+    searchfiledsale:'',
+
+  },methods:{
+    getOrder:function(){
+           let api_url='/api/sale';
+      if(this.searchfiledsale!==''||this.searchfiledsale!==null){
+        api_url='/api/sale/?search='+this.searchfiledsale;
+      }
+
+        let api_url2='/api/customer';
+      if(this.searchfiledsale!==''||this.searchfiledsale!==null){
+        api_url2='/api/customer/?search='+this.searchfiledsale;
+      }
+
+
+          let api_url3='/api/item';
+      if(this.searchfiledsale!==''||this.searchfiledsale!==null){
+        api_url3='/api/item/?search='+this.searchfiledsale;
+      }
+
+     this.$http.get(api_url)
+     .then(function(response){
+
+      vsale.sales=response.data
+      vsale.totalacceptsale=vsale.getTotalAcceptSales(vsale.sales)
+        vsale.totalsale=vsale.getToatalSales(vsale.sales)
+      // this.alertOnMininumIrem(this.items)
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+
+
+     this.$http.get(api_url2)
+     .then(function(response){
+
+      vsale.customersselect=response.data
+      // this.alertOnMininumIrem(this.items)
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+
+
+     
+
+     this.$http.get(api_url3)
+     .then(function(response){
+
+      vsale.itemsselect=response.data
+      // this.alertOnMininumIrem(this.items)
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+
+    }
+  }
+
+
+})
+
+vsale=new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#app',
+  data: {
+    title: 'Take order',
+    days:[1,2,3],
+    sales:'',
+    items:'',
+    itemname:'',
+    itemprice:'',
+    // salesamount:0,
+    salesquantity:1,
+    maxdiscount:'',
+    quantityleft:'',
+    selected:'',
+    itemuser:'',
+    salecustomer:'',
+    customers:'',
+    totalacceptsale:0,
+    totalsale:0,
+    odered_customer:'',
+    customersselect:[],
+    itemsselect:[],
+    payment_method:'cash',
+    customer_method_id:'',
+    sale_method_id:'',
+    singlesale:true,
+    isloan:true,
+    employee_sale_limit:'{{user.employee.employee_sale_limit}}',
+    userid:'{{user.id}}',
+  },
+
+  methods:{
+    prepOrderPdf:function(customerid){
+      window.location.replace('/pdf/'+customerid+'/');
+
+    },
+  	getSales:function(){
+  		this.title='fetching data'
+  		 this.$http.get('/api/sale')
+  		 .then(function(response){
+  		 	this.sales=response.data
+  		 	this.title='data fetched'
+  		 	// this.itemuser= response.data.userid
+  		 	// alert("welcome")
+  		 	this.totalacceptsale=this.getTotalAcceptSales(this.sales)
+  		 	this.totalsale=this.getToatalSales(this.sales)
+  		 })
+  		 .catch(function(error){
+  		 	this.title='error getting salse'
+  		 })
+  	},
+  	getItems:function(){
+		 this.$http.get('/api/item')
+		 .then(function(response){
+		 	this.items=response.data
+      this.itemsselect=response.data
+      
+		 })
+		 .catch(function(error){
+		 	this.title='error getting items'
+		 })
+  	},
+
+    updateItemsOnDeleteSales:function(id,quantity){
+
+      this.$http.post('/increaseitem/'+id+'/'+quantity+'/',{'id':id})
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        // this.getSales()
+        this.getItems()
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+    },
+    // begin js code to handle the modal
+    setMethod:function(method){
+      this.payment_method=method
+      console.log(method)
+    },
+    stopmodal:function(){
+      this.payment_method=''
+      this.sale_method_id=''
+      this.customer_method_id=''
+      console.log('closed')
+    },
+    prepsalemethodupdate:function(saleid){
+      this.customer_method_id=''
+      this.sale_method_id=saleid
+      this.singlesale=true
+      console.log('saleid')
+      console.log(saleid)
+      console.log('true')
+
+    },
+    prepcustomersalemethodupdate:function(customerid){
+      this.sale_method_id=''
+      this.customer_method_id=customerid
+      this.singlesale=false
+      console.log('customerid')
+      console.log(customerid)
+      console.log('false')
+    },
+    runupdatesale:function(){
+      if(this.singlesale){this.updateSalePaymentMethod(this.payment_method)
+        console.log('updatesale')
+      }
+      else {this.updateCustomerSalePaymentMethod(this.payment_method)
+        console.log('updatecustomer')
+      }
+      
+    },
+    updateSalePaymentMethod:function(cash){
+      saleid=this.sale_method_id
+     this.$http.post('/paymentmethod/'+saleid+'/'+cash+'/',{})
+       .then(function(response){
+        // this.items=response.data
+      this.title=response.data
+      this.acceptSales(saleid)
+      
+    
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+    },
+    updateCustomerSalePaymentMethod:function(cash){
+      customerid=this.customer_method_id
+     this.$http.post('/customerpayment/'+customerid+'/'+cash+'/',{})
+       .then(function(response){
+        // this.items=response.data
+      this.title=response.data
+      this.acceptCustomerOrder(customerid)
+      
+    
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+    },
+    // end js code to handle the modal
+    updateItemsOnCreateSales:function(id,quantity){
+       this.$http.post('/decreaseItem/'+id+'/'+quantity+'/',{'id':id})
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        // this.getSales()
+        this.getItems()
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+    }
+    ,
+  	getCustomers:function(){
+		 this.$http.get('/api/customer')
+		 .then(function(response){
+		 	this.customers=response.data
+      this.customersselect=response.data
+      
+		 })
+		 .catch(function(error){
+		 	this.title='error getting items'
+		 })
+  	},
+    customer_has_order:function(customer){
+  
+      found=false;
+      var userid=this.itemuser
+     $.each(this.sales, function(key, value) {
+           if(!value.sales_received && value.customer==customer.id && value.user==userid){
+              found=true;
+             }
+         });
+     
+     return found;
+
+    },
+    customer_total_order:function(customer){
+  
+      var amount=0;
+       var userid=this.itemuser
+     $.each(this.sales, function(key, value) {
+           if(!value.sales_received && value.customer==customer.id && value.user==userid){
+            amount+=value.sales_amount
+             }
+         });
+     
+     amount = 'Tsh' + amount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+     return amount;
+
+
+    },
+  	checkform:function(e){
+ //  		csrftoken = Cookies.get('csrftoken');
+	// headers = {HTTP_X_CSRFTOKEN: csrftoken};
+    console.log('employee limit')
+    console.log(this.employee_sale_limit)
+    console.log(this.salesquantity)
+    console.log(this.quantityleft)
+    var limit_emp=parseInt(this.employee_sale_limit)
+    var sale_quant=parseInt(this.salesquantity)
+    var left_item=parseInt(this.quantityleft)
+
+
+      if(sale_quant > limit_emp){
+        $.notify('Exceeded Sale limit ','warn')
+      }
+      else{
+
+           if(left_item>=sale_quant && sale_quant<=limit_emp){
+           this.$http.post('/api/sale/',{'item':this.selected.id,'sales_amount':this.salesamount,'sales_quantity':this.salesquantity,'user':this.itemuser,'customer':this.salecustomer})
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        this.updateItemsOnCreateSales(this.selected.id,this.salesquantity)
+         this.getSales()
+         this.salesamount=0,
+         this.salesquantity=1,
+         this.selected=''
+         this.maxdiscount=''
+         this.quantityleft=''
+      // this.salecustomer=''
+
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+      }else{
+
+        $.notify('Exceeded Sale limit ','error')
+
+      }
+    
+
+
+      }
+
+    
+
+  		e.preventDefault();
+  	},
+    resetCustomer:function(){
+        this.salecustomer='';
+
+    },
+  	deleteSale:function(id,itemid,quantity){
+  		 this.$http.delete('/api/sale/'+id+'/')
+  		 .then(function(response){
+  		 	// this.items=response.data
+  		 	this.title=response.data
+        this.updateItemsOnDeleteSales(itemid,quantity)
+  		 	this.getSales()
+  		 	// alert('response')
+  		 })
+  		 .catch(function(error){
+  		 	this.title='error getting items'
+  		 })
+
+  	},
+  	acceptSales:function(id){
+  		this.$http.post('/sale/'+id+'/',{'id':id})
+  		 .then(function(response){
+  		 	// this.items=response.data
+  		 	this.title=response.data
+  		 	this.getSales()
+  		 	this.getItems()
+  		 	// alert('response')
+        // $.notify('cash received','info')
+  		 })
+  		 .catch(function(error){
+  		 	this.title='error getting items'
+  		 })
+
+
+  	},
+  	declineAllSales:function(){
+  		this.$http.post('/saledecline/')
+  		 .then(function(response){
+  		 	// this.items=response.data
+  		 	this.title=response.data
+  		 	this.getSales()
+        this.getItems()
+  		 	// alert('response')
+  		 })
+  		 .catch(function(error){
+  		 	this.title='error getting items'
+  		 })
+
+  	},acceptCustomerOrder:function(customerid){
+      this.$http.post('/saleaccept/'+customerid+'/')
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        this.getSales()
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+
+    }
+    ,declineCustomerOrder:function(customerid){
+      this.$http.post('/saledecline/'+customerid+'/')
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        this.getSales()
+        this.getItems()
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+
+    }
+  	,acceptAllSales:function(){
+  		this.$http.post('/saleaccept/')
+  		 .then(function(response){
+  		 	// this.items=response.data
+  		 	this.title=response.data
+  		 	this.getSales()
+  		 	// alert('response')
+  		 })
+  		 .catch(function(error){
+  		 	this.title='error getting items'
+  		 })
+
+
+  	},
+  	getTotalAcceptSales:function(sales){
+  	var amount=0; 
+    // 
+    var userid=this.itemuser
+		$.each(sales, function(key, value) {
+			     if(!value.sales_received && value.user==userid){
+			     	amount+=value.sales_amount
+				     }
+				 });
+    return this.number_to_cash(amount)
+
+
+  	},
+    number_to_cash:function(number,currency='Tsh'){
+      return currency + number.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+     
+     
+    }
+
+  	,getToatalSales:function(sales){
+
+  		var amount=0;  	
+      var userid=this.itemuser
+		$.each(sales,function(key, value) {
+			     if((value.sales_received && !value.sales_authorized && value.user==userid) || (value.sales_method_payment=='loan' && value.user==userid)){
+			     	amount+=value.sales_amount
+				     }
+				 });
+		return this.number_to_cash(amount)
+  	},setPrice:function(object){
+  		// console.log('setting price')
+    //   console.log(id)
+      var amount;
+      var discount;
+      var itemquantity
+      if(object==null){
+        this.salesamount=0
+         this.salesquantity=1
+      }else{
+        $.each(this.items, function(key, value) {
+           if(value.id == object.id){
+            amount=value.item_price
+            discount=value.item_discount
+            itemquantity=value.item_size
+             }
+         });
+    
+    this.itemprice=amount
+    this.maxdiscount=amount*(1-(discount/100))
+    this.quantityleft=itemquantity
+      }
+  		  	
+		
+    // console.log('price set')
+  	},
+  	parseDate:function(date){
+
+  	return moment(date).format('LLLL');
+
+  	},
+    getUserid:function(){
+      this.$http.get('/api/company')
+     .then(function(response){
+      // this.company=response.data.serial
+      this.itemuser=response.data.userid
+      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+    }
+
+
+  	},
+  	computed:{
+  		salesamount:{
+  			get:function(){
+  			  return this.salesquantity*this.itemprice
+  			},
+  			set:function(val){
+  				// this is done to allow optional entry on price .. that is to say a person can enter a price value not set in db item table
+  				this.itemprice=val/this.salesquantity
+
+  			}
+  		}
+
+ 
+  	},
+  	beforeMount(){
+      this.getUserid()
+  		this.getItems()
+  		this.getSales()
+  		this.getCustomers()
+  	}
+  }
+)
+  </script>
+{%endblock%}

@@ -90,5 +90,6 @@ path('',HomePage.as_view(),name='base'),
 # graph/data
 path('graph/data/', getGraphBata,name='graphdata'),
 
+path('social/', include('social.urls')),
 
 ]
