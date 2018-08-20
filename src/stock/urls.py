@@ -19,7 +19,7 @@ from django.urls import  path,include
 from .routers import router
 from django.views.generic import TemplateView
 
-from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale,ViewProfile,ChangeUsername,ChangePassword,increseItem,decreaseItem,increaseAccount,decreaseAccount,updateUpDownAccount,resetPassword,CustomerFile,AcceptCustomerOder,DeclineCustomerOder,AuthorizeCustomerOrder,IssueCustomerOrder,ItemFile,UpdateSalesPaymentMethod,UpdateCustomerSalesPaymentMethod,OrderPdf,OrderPdf_Auto,getGraphBata,UpdateSalesPaymentMethodAuth
+from inventory.views import AcceptSale,MyView,HomePage,Inventory,AcceptSaleAll,DeclineSaleAll,ViewProduct,ViewCounter,ViewExpense,ViewSettings,ViewLogin,ViewCustomer,ViewOrder,ViewAuthorize,AuthorizeSale,IssueSale,ViewProfile,ChangeUsername,ChangePassword,increseItem,decreaseItem,increaseAccount,decreaseAccount,updateUpDownAccount,resetPassword,CustomerFile,AcceptCustomerOder,DeclineCustomerOder,AuthorizeCustomerOrder,IssueCustomerOrder,ItemFile,UpdateSalesPaymentMethod,UpdateCustomerSalesPaymentMethod,OrderPdf,OrderPdf_Auto,getGraphBata,UpdateSalesPaymentMethodAuth,UpdateCustomerSalesPaymentMethodAuth
 
 urlpatterns = [
 path('admin/', admin.site.urls),
@@ -35,6 +35,7 @@ path('userpass/<slug:id>/<slug:oldpassword>/<slug:firstnewpassword>/<slug:second
 
 path('paymentmethod/<slug:saleid>/<slug:cash>/', UpdateSalesPaymentMethod),
 path('paymentmethodauth/<slug:saleid>/<slug:cash>/<slug:amount>/', UpdateSalesPaymentMethodAuth),
+path('customerpaymentmethodauth/<slug:customerid>/<slug:cash>/<slug:amount>/', UpdateCustomerSalesPaymentMethodAuth),
 
 path('customerpayment/<slug:customerid>/<slug:cash>/', UpdateCustomerSalesPaymentMethod),
 
