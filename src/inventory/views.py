@@ -118,6 +118,9 @@ def arrrange_days_forgraph(data=None,days=None):
 	# the values in appropiate sequence
 	for position in days_position:
 		print(position)
+		if data[position-1] is None:
+			data[position-1]=0
+			print(0)
 		days_value.append(data[position-1])
 
 	print("new arranged data")

@@ -76,7 +76,14 @@ display: none;}
 }
 
 
+.nav li:hover{
+	box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+}
 
+tr:hover{
+	box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
 
 
 </style>
@@ -100,6 +107,7 @@ display: none;}
   padding: 10px;}
 
 
+}
 </style>
 
 {%endblock%}
@@ -150,14 +158,14 @@ display: none;}
               {%if user.employee.employee_privillage <= 2 or user.employee.employee_privillage == 3%}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'order' %}">
-                  <span data-feather="file"></span>
+                  <span data-feather="codepen"></span>
                   Orders
                 </a>
               </li>
 
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'customer' %}">
-                  <span data-feather="file"></span>
+                  <span data-feather="user"></span>
                   Customers
                 </a>
               </li>
@@ -173,7 +181,7 @@ display: none;}
               {%if user.employee.employee_privillage <= 2 or user.employee.employee_privillage == 4 %}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'expense' %}">
-                  <span data-feather="users"></span>
+                  <span data-feather="copy"></span>
                   Expenses
                 </a>
               </li>
@@ -181,7 +189,7 @@ display: none;}
               {%if user.employee.employee_privillage <= 2 or user.employee.employee_privillage == 5 %}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'counter' %}">
-                  <span data-feather="users"></span>
+                  <span data-feather="cloud-rain"></span>
                   Stock
                 </a>
               </li>
@@ -200,14 +208,14 @@ display: none;}
             {%if user.employee.employee_privillage <= 2 %}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'authorize' %}">
-                  <span data-feather="file-text"></span>
+                  <span data-feather="command"></span>
                   Authorize
                 </a>
               </li>
               {%endif%}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'profile' %}">
-                  <span data-feather="file-text"></span>
+                  <span data-feather="user"></span>
                   Profile
                 </a>
               </li>
@@ -215,7 +223,7 @@ display: none;}
               {%if user.employee.employee_privillage <= 2 %}
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'settings' %}">
-                  <span data-feather="file-text"></span>
+                  <span data-feather="settings"></span>
                   Settings
                 </a>
               </li>
@@ -223,7 +231,7 @@ display: none;}
               {%endif%}
               <li class="nav-item">
                 <a class="nav-link text-primary" href="/login/">
-                  <span data-feather="file-text"></span>
+                  <span data-feather="corner-down-left"></span>
                   Sign Out
                 </a>
               </li>
@@ -272,7 +280,7 @@ display: none;}
 
           <h2 v-cloak>[[tablename]] </h2>
           <div class="table-responsive">
-            <table class="table table-hover table-sm css-serial">
+            <table class="table table-sm css-serial">
    	  <thead>
     <tr>
       <th scope="col">No</th>

@@ -9,6 +9,11 @@
 	[v-cloak]{
 		display: none;
 	}
+
+	.go3d{  /*min-width:100px;*/ 
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;}
+
 </style>
 {%endblock%}
 {%block inputsearch%}
@@ -69,7 +74,7 @@
 	<h1 v-cloak>[[settings]]</h1>
 
 <div class="list-group container">
-  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start " style="margin-top: 20px">
+  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start go3d" style="margin-top: 20px">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1">Company</h5>
       <small><button v-on:click="checkSubmitCompanyForm" type="submit" class="btn btn-outline-primary btn-sm">Update</button></small>
@@ -131,7 +136,7 @@
 </ul>
 
   </div>
-  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start" style="margin-top: 20px">
+  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start go3d" style="margin-top: 20px">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1">Store</h5>
       <small class="text-muted">
@@ -185,7 +190,7 @@
 </ul>
     </small>
   </div>
-  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start" style="margin-top: 20px">
+  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start go3d" style="margin-top: 20px">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1">Account</h5>
       <small class="text-muted">
@@ -231,7 +236,7 @@
     </small>
   </div>
 
-   <div href="#" class="list-group-item list-group-item-action flex-column align-items-start" style="margin-top: 20px">
+   <div href="#" class="list-group-item list-group-item-action flex-column align-items-start go3d" style="margin-top: 20px">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1">Employees</h5>
       <small class="text-muted"><button type="submit" v-bind:class="{'btn':true,'btn-sm':true,'btn-block':true,'btn-outline-primary':(addemployeebutton=='Add'),'btn-outline-dark':(addemployeebutton!='Add')}" v-cloak v-on:click="checkSubmitEmployeeForm">[[addemployeebutton]]</button></small>

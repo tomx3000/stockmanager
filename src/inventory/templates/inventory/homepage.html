@@ -257,11 +257,10 @@ body {
 		
 	</div>
 
-	<div class="row"  style=" max-height: 500px;
-	overflow-y: auto;overflow-x: scroll;">
+	<div class="row"  >
   <!-- received orders -->
-  <div v-for="customer in customers" style="margin-bottom: 20px;" v-if="customer_order_received(customer)" class="go3d" style=" max-width: 100%;
-  overflow-x: auto;overflow-y: auto;">
+  <div v-for="customer in customers" style="margin-bottom: 20px;  max-width: 100%;
+  overflow-x: auto;overflow-y: auto;" v-if="customer_order_received(customer)" class="go3d" >
   <div class="row">
   <h3 v-cloak  class="col-6">  [[customer.customer_name]]</h3>
 <h4 class="col-6 text-primary" v-cloak v-if="customer_has_loan(customer)" >  [[number_to_cash(customer_total_loan_order(customer))]]</h4> 

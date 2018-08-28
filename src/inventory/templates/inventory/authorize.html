@@ -310,6 +310,7 @@ new Vue({
       
     },
     updateSalePaymentMethod:function(payment_method){
+      this.loading=true
       saleid=this.sale_method_id
       loan=this.loanpaid
      this.$http.post('/paymentmethodauth/'+saleid+'/'+payment_method+'/'+loan+'/',{})
@@ -320,7 +321,7 @@ new Vue({
 
       this.getSales()
       
-    
+     this.loading=false
        })
        .catch(function(error){
         this.title='error getting items'
@@ -328,6 +329,7 @@ new Vue({
 
     },
     updateCustomerSalePaymentMethod:function(payment_method){
+    	this.loading=true
       customerid=this.customer_method_id
       loan=this.loanpaid
      this.$http.post('/customerpaymentmethodauth/'+customerid+'/'+payment_method+'/'+loan+'/',{})
@@ -337,6 +339,7 @@ new Vue({
       // this.acceptCustomerOrder(customerid)
       
       this.getSales()
+      this.loading=false
     
        })
        .catch(function(error){
