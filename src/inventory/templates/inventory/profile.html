@@ -11,13 +11,13 @@
    <div id="">
     
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow row ">
-      <a class="navbar-brand col-2 col-sm-2 col-md-2 col-lg-2  mr-0 " href="#">Oceanic : {{user.username}}
+      <a class="navbar-brand col-3 col-sm-3 col-md-2 col-lg-2  mr-0 " href="#"><i class="fa fa-user-circle"></i> {{user.username}}
       </a>
-      <input class="form-control form-control-dark col-5 col-sm-5 col-md-8 col-lg-8 w-100" type="text" placeholder="Search" aria-label="Search" >
-      <button class='btn btn-outline-secondary my-2 my-sm-0 col-2 col-sm-2 col-md-1 col-lg-1' >search</button>
-      <ul class="navbar-nav px-3 col-3 col-sm-3 col-md-1 col-lg-1">
+      <input class="form-control form-control col-6 col-sm-6 col-md-8 col-lg-8 w-100" type="text" placeholder="Search" aria-label="Search" >
+      <!-- <button class='btn btn-outline-secondary my-2 my-sm-0 col-2 col-sm-2 col-md-1 col-lg-1' >search</button> -->
+      <ul class="navbar-nav px-3 col-3 col-sm-3 col-md-2 col-lg-2">
         <li class="nav-item text-nowrap ">
-          <a class="nav-link" href="/login/">Sign out</a>
+          <a class="nav-link" href="#"><i class="fa fa-search" aria-hidden="true"></i></a>
         </li>
       </ul>
     </nav>
@@ -232,7 +232,7 @@
   <input type="password" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"  v-model="newpassword_two" v-if="editpassword">
 </div>
 <!-- end new2 password -->
-    <button v-if="editpassword" v-on:click="updatePassword(userid,oldpassword,newpassword_one,newpassword_two,user.username)" class="btn btn-outline-secondary" type="button">uodate</button>
+    <button v-if="editpassword" v-on:click="updatePassword(userid,oldpassword,newpassword_one,newpassword_two,user.username)" class="btn btn-outline-secondary" type="button">update</button>
   </div>
 
 </div>
